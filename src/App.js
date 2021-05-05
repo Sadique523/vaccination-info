@@ -5,10 +5,11 @@ const { Option } = Select;
 
 export default function App() {
   const [date, setDate] = useState();
-  const [district, setDistrict] = useState("");
+  const [district, setDistrict] = useState();
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [sessions, setSessions] = useState();
+  const [disabled, setDisabled] = useState(true);
 
   const columns = [
     {
@@ -25,6 +26,16 @@ export default function App() {
       title: "Name",
       dataIndex: "name",
       key: "name"
+    },
+    {
+      title: "Available Capacity",
+      dataIndex: "capacity",
+      key: "capacity"
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address"
     }
   ];
   useEffect(() => {
@@ -32,6 +43,12 @@ export default function App() {
       .then((res) => res.json())
       .then((res) => setStates(res.states));
   }, []);
+
+  useEffect(() => {
+    if(district && date) {
+      setDisabled(false)
+    }
+  }, [district, date]);
 
   const getDistrict = (val) => {
     fetch(`https://cdn-api.co-vin.in/api/v2/admin/location/districts/${val}`)
@@ -48,14 +65,17 @@ export default function App() {
     )
       .then((res) => res.json())
       .then((res) => {
-        const data = res.sessions.map(({ date, fee, name }, i) => {
+        const data = res.sessions.map(({ date, fee, name, address, available_capacity }, i) => {
           return {
             key: i,
             date,
             fee,
-            name
+            name,
+            address,
+            capacity: available_capacity
           };
         });
+        console.log(res);
         setSessions(data);
       });
   };
@@ -118,7 +138,7 @@ export default function App() {
               }}
             />
           </Space>
-          <Button onClick={findAvailability} style={{background: 'tomato', border: '1px solid tomato'}} type="primary" block>
+          <Button disabled={disabled} onClick={findAvailability} style={{background: 'tomato', border: '1px solid tomato'}} type="primary" block>
             Find Slots
           </Button>
         </div>
