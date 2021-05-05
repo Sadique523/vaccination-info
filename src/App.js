@@ -61,7 +61,7 @@ export default function App() {
   };
 
   return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
+    <div style={{ display: "flex", justifyContent: "center", padding: 20 }}>
       <div
         style={{
           display: "flex",
@@ -119,7 +119,6 @@ export default function App() {
               }}
             />
           </Space>
-          ,
         </div>
         <Table dataSource={sessions} columns={columns} />
       </div>
