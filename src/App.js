@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { Select, Table, DatePicker, Space } from "antd";
+import { Select, Table, DatePicker, Space, Button } from "antd";
 import "./styles.css";
 const { Option } = Select;
 
 export default function App() {
-  // const [date, setDate] = useState(Date.now());
+  const [date, setDate] = useState();
   const [district, setDistrict] = useState("");
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -42,7 +42,7 @@ export default function App() {
       });
   };
 
-  const findAvailability = (date) => {
+  const findAvailability = () => {
     fetch(
       `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=${district}&date=${date}`
     )
@@ -70,7 +70,7 @@ export default function App() {
           textAlign: "center"
         }}
       >
-        <h1>Vaccination Info</h1>
+        <h1 style={{color: 'tomato'}}>Vaccination Info</h1>
         <div style={{ display: "flex", flexDirection: "column", margin: 20 }}>
           <Select
             style={{ margin: "10px 0px" }}
@@ -110,15 +110,17 @@ export default function App() {
               return <Option key={district_id} value={district_id}>{district_name}</Option>;
             })}
           </Select>
-          <Space style={{ width: "100%" }} direction="vertical">
+          <Space style={{ marginBottom: "20px" }} direction="vertical">
             <DatePicker
               format="DD/MM/YYYY"
               onChange={(date, dateString) => {
-                console.log(date, dateString);
-                findAvailability(dateString);
+                setDate(dateString);
               }}
             />
           </Space>
+          <Button onClick={findAvailability} style={{background: 'tomato', border: '1px solid tomato'}} type="primary" block>
+            Find Slots
+          </Button>
         </div>
         <Table dataSource={sessions} columns={columns} />
       </div>
