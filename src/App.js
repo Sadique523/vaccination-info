@@ -130,7 +130,7 @@ export default function App() {
       )
     }
     return (
-      <Input style={{ margin: "10px 0px" }} value={pincode} onChange={e => setPincode(e.target.value)} placeholder="Enter Pincode" />
+      <Input style={{ margin: "10px 0px", fontSize: 16 }} value={pincode} onChange={e => setPincode(e.target.value)} placeholder="Enter Pincode" />
     )
    
   }
