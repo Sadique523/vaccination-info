@@ -89,7 +89,7 @@ export default function App() {
       return (
         <>
         <Select
-        style={{ margin: "10px 0px" }}
+        style={{ margin: "10px 0px", fontSize: 16  }}
         defaultValue="Select State"
         showSearch
         optionFilterProp="children"
@@ -108,7 +108,7 @@ export default function App() {
         })}
       </Select>
       <Select
-        style={{ marginBottom: "10px" }}
+        style={{ marginBottom: "10px", fontSize: 16 }}
         defaultValue="Select District"
         showSearch
         optionFilterProp="children"
