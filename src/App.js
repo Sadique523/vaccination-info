@@ -145,10 +145,9 @@ export default function App() {
           textAlign: "center"
         }}
       >
-        <h1 style={{color: 'tomato'}}>Vaccination Info</h1>
+        <h1 style={{color: 'hotpink'}}>Vaccination Info</h1>
         <div style={{ display: "flex", flexDirection: "column", margin: 20 }}>
         <Radio.Group
-        style={{color: 'tomato'}}
           options={[
             { label: 'District', value: 'district' },
             { label: 'Pincode', value: 'pincode' },
@@ -167,7 +166,7 @@ export default function App() {
               }}
             />
           </Space>
-          <Button disabled={disabled} onClick={findAvailability} style={{background: 'tomato', border: '1px solid tomato'}} type="primary" block>
+          <Button disabled={disabled} onClick={findAvailability} style={{background: 'hotpink', border: '1px solid tomato'}} type="primary" block>
             Find Slots
           </Button>
         </div>
