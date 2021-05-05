@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { Select, Table } from "antd";
+import { Select, Table, DatePicker, Space } from "antd";
 import "./styles.css";
 const { Option } = Select;
 
 export default function App() {
+  // const [date, setDate] = useState(Date.now());
+  const [district, setDistrict] = useState("");
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [sessions, setSessions] = useState();
@@ -40,14 +42,15 @@ export default function App() {
       });
   };
 
-  const findAvailability = (val) => {
+  const findAvailability = (date) => {
     fetch(
-      `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=${val}&date=31-03-2021`
+      `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=${district}&date=${date}`
     )
       .then((res) => res.json())
       .then((res) => {
-        const data = res.sessions.map(({ date, fee, name }) => {
+        const data = res.sessions.map(({ date, fee, name }, i) => {
           return {
+            key: i,
             date,
             fee,
             name
@@ -85,10 +88,11 @@ export default function App() {
             onChange={(val) => getDistrict(val)}
           >
             {states.map(({ state_name, state_id }) => {
-              return <Option value={state_id}>{state_name}</Option>;
+              return <Option key={state_id} value={state_id}>{state_name}</Option>;
             })}
           </Select>
           <Select
+            style={{ marginBottom: "10px" }}
             defaultValue="Select District"
             showSearch
             optionFilterProp="children"
@@ -100,12 +104,22 @@ export default function App() {
                 .toLowerCase()
                 .localeCompare(optionB.children.toLowerCase())
             }
-            onChange={(val) => findAvailability(val)}
+            onChange={(val) => setDistrict(val)}
           >
             {districts.map(({ district_name, district_id }) => {
-              return <Option value={district_id}>{district_name}</Option>;
+              return <Option key={district_id} value={district_id}>{district_name}</Option>;
             })}
           </Select>
+          <Space style={{ width: "100%" }} direction="vertical">
+            <DatePicker
+              format="DD/MM/YYYY"
+              onChange={(date, dateString) => {
+                console.log(date, dateString);
+                findAvailability(dateString);
+              }}
+            />
+          </Space>
+          ,
         </div>
         <Table dataSource={sessions} columns={columns} />
       </div>
