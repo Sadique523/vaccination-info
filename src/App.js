@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { Select, Table, DatePicker, Space, Button } from "antd";
+import { Select, Table, DatePicker, Space, Button, Radio, Input } from "antd";
 import "./styles.css";
 const { Option } = Select;
 
 export default function App() {
   const [date, setDate] = useState();
+  const [pincode, setPincode] = useState();
+  const [type, setType] = useState('district');
   const [district, setDistrict] = useState();
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -45,10 +47,10 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if(district && date) {
+    if((district && date) || (pincode && date)) {
       setDisabled(false)
     }
-  }, [district, date]);
+  }, [district, date, pincode]);
 
   const getDistrict = (val) => {
     fetch(`https://cdn-api.co-vin.in/api/v2/admin/location/districts/${val}`)
@@ -60,8 +62,10 @@ export default function App() {
   };
 
   const findAvailability = () => {
+    const api = type === 'district' ? `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=${district}&date=${date}` 
+    : `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByPin?pincode=${pincode}&date=${date}`
     fetch(
-      `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=${district}&date=${date}`
+      api
     )
       .then((res) => res.json())
       .then((res) => {
@@ -80,6 +84,57 @@ export default function App() {
       });
   };
 
+  const getType = () => {
+    if(type === 'district') {
+      return (
+        <>
+        <Select
+        style={{ margin: "10px 0px" }}
+        defaultValue="Select State"
+        showSearch
+        optionFilterProp="children"
+        filterOption={(input, option) =>
+          option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+        }
+        filterSort={(optionA, optionB) =>
+          optionA.children
+            .toLowerCase()
+            .localeCompare(optionB.children.toLowerCase())
+        }
+        onChange={(val) => getDistrict(val)}
+      >
+        {states.map(({ state_name, state_id }) => {
+          return <Option key={state_id} value={state_id}>{state_name}</Option>;
+        })}
+      </Select>
+      <Select
+        style={{ marginBottom: "10px" }}
+        defaultValue="Select District"
+        showSearch
+        optionFilterProp="children"
+        filterOption={(input, option) =>
+          option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+        }
+        filterSort={(optionA, optionB) =>
+          optionA.children
+            .toLowerCase()
+            .localeCompare(optionB.children.toLowerCase())
+        }
+        onChange={(val) => setDistrict(val)}
+      >
+        {districts.map(({ district_name, district_id }) => {
+          return <Option key={district_id} value={district_id}>{district_name}</Option>;
+        })}
+      </Select>
+      </>
+      )
+    }
+    return (
+      <Input style={{ margin: "10px 0px" }} value={pincode} onChange={e => setPincode(e.target.value)} placeholder="Enter Pincode" />
+    )
+   
+  }
+
   return (
     <div style={{ display: "flex", justifyContent: "center", padding: 20 }}>
       <div
@@ -92,44 +147,18 @@ export default function App() {
       >
         <h1 style={{color: 'tomato'}}>Vaccination Info</h1>
         <div style={{ display: "flex", flexDirection: "column", margin: 20 }}>
-          <Select
-            style={{ margin: "10px 0px" }}
-            defaultValue="Select State"
-            showSearch
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-            }
-            filterSort={(optionA, optionB) =>
-              optionA.children
-                .toLowerCase()
-                .localeCompare(optionB.children.toLowerCase())
-            }
-            onChange={(val) => getDistrict(val)}
-          >
-            {states.map(({ state_name, state_id }) => {
-              return <Option key={state_id} value={state_id}>{state_name}</Option>;
-            })}
-          </Select>
-          <Select
-            style={{ marginBottom: "10px" }}
-            defaultValue="Select District"
-            showSearch
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-            }
-            filterSort={(optionA, optionB) =>
-              optionA.children
-                .toLowerCase()
-                .localeCompare(optionB.children.toLowerCase())
-            }
-            onChange={(val) => setDistrict(val)}
-          >
-            {districts.map(({ district_name, district_id }) => {
-              return <Option key={district_id} value={district_id}>{district_name}</Option>;
-            })}
-          </Select>
+        <Radio.Group
+        style={{color: 'tomato'}}
+          options={[
+            { label: 'District', value: 'district' },
+            { label: 'Pincode', value: 'pincode' },
+          ]}
+          onChange={(e) => setType(e.target.value)}
+          value={type}
+          optionType="button"
+          buttonStyle="solid"
+        />
+        {getType()}
           <Space style={{ marginBottom: "20px" }} direction="vertical">
             <DatePicker
               format="DD/MM/YYYY"
