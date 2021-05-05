@@ -10,7 +10,7 @@ export default function App() {
   const [district, setDistrict] = useState();
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
-  const [sessions, setSessions] = useState();
+  const [sessions, setSessions] = useState([]);
   const [disabled, setDisabled] = useState(true);
 
   const columns = [
@@ -141,7 +141,7 @@ export default function App() {
         style={{
           display: "flex",
           flexDirection: "column",
-          flexBasis: "400px",
+          flexBasis: "600px",
           textAlign: "center"
         }}
       >
@@ -170,7 +170,10 @@ export default function App() {
             Find Slots
           </Button>
         </div>
-        <Table dataSource={sessions} columns={columns} />
+        <div style={{ overflow: 'auto'}}>
+         { sessions.length ?  <Table style={{maxWidth: '300px'}} dataSource={sessions} columns={columns} /> : 'No Slots avaiable'}
+         
+        </div>
       </div>
     </div>
   );
