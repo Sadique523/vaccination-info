@@ -11,3 +11,7 @@ body {
 .ant-picker {
   width: 100%;
 }
+
+.ant-table-cell {
+  min-width: 110px;
+}
